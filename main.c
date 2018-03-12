@@ -402,7 +402,7 @@ static Input ipump(Input input)
     int dy;
     SDL_Event event;
     SDL_PollEvent(&event);
-    if(event.type == SDL_QUIT || event.key.keysym.sym == SDLK_ESCAPE)
+    if(event.type == SDL_QUIT)
         input.done = 1;
     SDL_GetRelativeMouseState(&dx, &dy);
     input.xt -= input.sens * dx;
