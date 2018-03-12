@@ -402,7 +402,7 @@ static Input ipump(Input input)
     int dy;
     SDL_Event event;
     SDL_PollEvent(&event);
-    if(event.type == SDL_QUIT || event.type == SDL_KEYUP)
+    if(event.type == SDL_QUIT || event.key.keysym.sym == SDLK_ESCAPE)
         input.done = 1;
     SDL_GetRelativeMouseState(&dx, &dy);
     input.xt -= input.sens * dx;
@@ -521,6 +521,7 @@ int main(int argc, char* argv[])
         sunlock(sdl);
         schurn(sdl);
         spresent(sdl);
+        SDL_Delay(15);
     }
     // Let the OS free hoisted memory for a quick exit.
     return 0;
