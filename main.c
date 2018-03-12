@@ -391,7 +391,7 @@ static Triangle tviewnrm(const Triangle n, const Vertex x, const Vertex y, const
 
 static Input iinit()
 {
-    const Input input = { 0.0f, 0.0f, 0.005f, 0 };
+    const Input input = { 3.14, 0.0f, 0.005f, 0 };
     SDL_SetRelativeMouseMode(SDL_FALSE);
     return input;
 }
@@ -407,6 +407,12 @@ static Input ipump(Input input)
     SDL_GetRelativeMouseState(&dx, &dy);
     input.xt -= input.sens * dx;
     input.yt += input.sens * dy;
+
+    input.xt += 0.01f;
+
+    if(input.xt >= 3.1416f * 3)
+        input.done = 1;
+
     return input;
 }
 
