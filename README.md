@@ -1,4 +1,4 @@
-![screenshot](img/logo.png)
+![screenshot](img/salesman.gif)
 
 Gel (Graphical Emulation Layer) is an N64-like software renderer.
 
