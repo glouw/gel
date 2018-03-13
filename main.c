@@ -339,7 +339,7 @@ static uint32_t pshade(const uint32_t pixel, const int shading)
     return r << 0x10 | g << 0x08 | b;
 }
 
-static void tdraw(const int yres, uint32_t* const pixel, float* const zbuff, const Target t, const Vertex light)
+static void tdraw(const int yres, uint32_t* const pixel, float* const zbuff, const Target t, const Vertex lights)
 {
     const int x0 = fminf(t.vew.a.x, fminf(t.vew.b.x, t.vew.c.x));
     const int y0 = fminf(t.vew.a.y, fminf(t.vew.b.y, t.vew.c.y));
@@ -355,7 +355,7 @@ static void tdraw(const int yres, uint32_t* const pixel, float* const zbuff, con
             const float z = bc.x * t.vew.b.z + bc.y * t.vew.c.z + bc.z * t.vew.a.z;
             if(z > zbuff[y + x * yres])
             {
-                const Vertex varying = { vdot(light, t.nrm.b), vdot(light, t.nrm.c), vdot(light, t.nrm.a) };
+                const Vertex varying = { vdot(lights, t.nrm.b), vdot(lights, t.nrm.c), vdot(lights, t.nrm.a) };
                 const uint32_t* const pixels = (uint32_t*) t.fdif->pixels;
                 const int xx = (t.fdif->w - 1) * (0.0f + (bc.x * t.tex.b.x + bc.y * t.tex.c.x + bc.z * t.tex.a.x));
                 const int yy = (t.fdif->h - 1) * (1.0f - (bc.x * t.tex.b.y + bc.y * t.tex.c.y + bc.z * t.tex.a.y));
@@ -505,8 +505,8 @@ int main(int argc, char* argv[])
         reset(zbuff, pixel, sdl.xres * sdl.yres);
         const Vertex center = { 0.0f, 0.0f, 0.0f };
         const Vertex upward = { 0.0f, 1.0f, 0.0f };
+        const Vertex lights = { 0.0f, 0.0f, 1.0f };
         const Vertex eye = { sinf(input.xt), sinf(input.yt), cosf(input.xt) };
-        const Vertex light = { 0.0f, 0.0f, 1.0f };
         const Vertex z = vunit(vsub(eye, center));
         const Vertex x = vunit(vcross(upward, z));
         const Vertex y = vcross(z, x);
@@ -518,7 +518,7 @@ int main(int argc, char* argv[])
             const Triangle per = tperspective(tri);
             const Triangle vew = tviewport(per, sdl);
             const Target target = { vew, nrm, tex, fdif };
-            tdraw(sdl.yres, pixel, zbuff, target, light);
+            tdraw(sdl.yres, pixel, zbuff, target, lights);
         }
         sunlock(sdl);
         schurn(sdl);
@@ -529,4 +529,3 @@ int main(int argc, char* argv[])
     }
     return 0;
 }
-
