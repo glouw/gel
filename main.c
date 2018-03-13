@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <float.h>
@@ -338,7 +339,7 @@ static uint32_t pshade(const uint32_t pixel, const int shading)
     return r << 0x10 | g << 0x08 | b;
 }
 
-static void tdraw(const int yres, uint32_t* const pixel, float* const zbuff, const Target t)
+static void tdraw(const int yres, uint32_t* const pixel, float* const zbuff, const Target t, const Vertex light)
 {
     const int x0 = fminf(t.vew.a.x, fminf(t.vew.b.x, t.vew.c.x));
     const int y0 = fminf(t.vew.a.y, fminf(t.vew.b.y, t.vew.c.y));
@@ -354,13 +355,12 @@ static void tdraw(const int yres, uint32_t* const pixel, float* const zbuff, con
             const float z = bc.x * t.vew.b.z + bc.y * t.vew.c.z + bc.z * t.vew.a.z;
             if(z > zbuff[y + x * yres])
             {
-                const Vertex light = { 0.0f, 0.0f, 1.0f };
                 const Vertex varying = { vdot(light, t.nrm.b), vdot(light, t.nrm.c), vdot(light, t.nrm.a) };
                 const uint32_t* const pixels = (uint32_t*) t.fdif->pixels;
                 const int xx = (t.fdif->w - 1) * (0.0f + (bc.x * t.tex.b.x + bc.y * t.tex.c.x + bc.z * t.tex.a.x));
                 const int yy = (t.fdif->h - 1) * (1.0f - (bc.x * t.tex.b.y + bc.y * t.tex.c.y + bc.z * t.tex.a.y));
                 const float intensity = vdot(bc, varying);
-                const int shading = 0xFF * (intensity < 0.0f ? 0.0f : intensity);
+                const int shading = 0xFF * (intensity < 0.0f ? 0.0f : intensity > 1.0f ? 1.0f : intensity);
                 // Image is upwards contrary to sideways renderer.
                 zbuff[y + x * yres] = z;
                 pixel[y + x * yres] = pshade(pixels[xx + yy * t.fdif->w], shading);
@@ -470,10 +470,10 @@ static FILE* oload(const char* const path)
 
 static SDL_Surface* sload(const char* const path)
 {
-    SDL_Surface* const bmp = SDL_LoadBMP(path);
+    SDL_Surface* const bmp = IMG_Load(path);
     if(bmp == NULL)
     {
-        puts(SDL_GetError());
+        puts(IMG_GetError());
         exit(1);
     }
     SDL_PixelFormat* const allocation = SDL_AllocFormat(SDL_PIXELFORMAT_RGB888);
@@ -506,6 +506,7 @@ int main(int argc, char* argv[])
         const Vertex center = { 0.0f, 0.0f, 0.0f };
         const Vertex upward = { 0.0f, 1.0f, 0.0f };
         const Vertex eye = { sinf(input.xt), sinf(input.yt), cosf(input.xt) };
+        const Vertex light = { 0.0f, 0.0f, 1.0f };
         const Vertex z = vunit(vsub(eye, center));
         const Vertex x = vunit(vcross(upward, z));
         const Vertex y = vcross(z, x);
@@ -517,7 +518,7 @@ int main(int argc, char* argv[])
             const Triangle per = tperspective(tri);
             const Triangle vew = tviewport(per, sdl);
             const Target target = { vew, nrm, tex, fdif };
-            tdraw(sdl.yres, pixel, zbuff, target);
+            tdraw(sdl.yres, pixel, zbuff, target, light);
         }
         sunlock(sdl);
         schurn(sdl);

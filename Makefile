@@ -28,7 +28,7 @@ ifdef ComSpec
 	LDFLAGS += -lmingw32
 	LDFLAGS += -lSDL2main
 endif
-LDFLAGS += -lSDL2 -lm
+LDFLAGS += -lSDL2 -lm -lSDL2_image
 
 ifdef ComSpec
 	RM = del /F /Q
