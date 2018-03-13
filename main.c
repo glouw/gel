@@ -500,6 +500,7 @@ int main(int argc, char* argv[])
     float* const zbuff = (float*) malloc(sizeof(float) * sdl.xres * sdl.yres);
     for(Input input = iinit(); !input.done; input = ipump(input))
     {
+        const int t0 = SDL_GetTicks();
         uint32_t* const pixel = slock(sdl);
         reset(zbuff, pixel, sdl.xres * sdl.yres);
         const Vertex center = { 0.0f, 0.0f, 0.0f };
@@ -521,8 +522,11 @@ int main(int argc, char* argv[])
         sunlock(sdl);
         schurn(sdl);
         spresent(sdl);
-        SDL_Delay(15);
+        const int t1 = SDL_GetTicks();
+        const int ms = 1000.0f / 60.0f - (t1 - t0);
+        SDL_Delay(ms < 0 ? 0 : ms);
     }
     // Let the OS free hoisted memory for a quick exit.
     return 0;
 }
+
