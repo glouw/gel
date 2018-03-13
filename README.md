@@ -7,6 +7,7 @@ Gel (Graphical Emulation Layer) is an N64-like software renderer.
 Dependencies:
 
     SDL2-devel
+    SDL2-image-devel
 
 Models, for educational purposes, can be found here:
 
