@@ -13,7 +13,7 @@ Models, for educational purposes, can be found here:
 
     https://www.models-resource.com/nintendo_64/
 
-Models obj files must be bundled with a single texture file. Obj files
+Models must be bundled with a single obj file and texture file. The obj file
 must include vertex normals.
 
 Rotate the screen with the mouse.
