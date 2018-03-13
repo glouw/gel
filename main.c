@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <float.h>
@@ -470,10 +471,10 @@ static FILE* oload(const char* const path)
 
 static SDL_Surface* sload(const char* const path)
 {
-    SDL_Surface* const bmp = SDL_LoadBMP(path);
+    SDL_Surface* const bmp = IMG_Load(path);
     if(bmp == NULL)
     {
-        puts(SDL_GetError());
+        puts(IMG_GetError());
         exit(1);
     }
     SDL_PixelFormat* const allocation = SDL_AllocFormat(SDL_PIXELFORMAT_RGB888);
