@@ -527,7 +527,6 @@ int main(int argc, char* argv[])
         const int ms = 1000.0f / 60.0f - (t1 - t0);
         SDL_Delay(ms < 0 ? 0 : ms);
     }
-    // Let the OS free hoisted memory for a quick exit.
     return 0;
 }
 
