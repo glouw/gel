@@ -1,6 +1,2 @@
-*.o
-*.d
 gel
-*.cachegrind
-*.callgrind
-gel-1.0.zip
+obj/
